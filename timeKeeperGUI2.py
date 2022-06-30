@@ -96,7 +96,7 @@ class App(customtkinter.CTk):
         self.task_window = customtkinter.CTkToplevel(master=self)
         self.task_window.title("Select Task")
         # place task_window right next to self with a gap of 50 px
-        self.task_window.geometry(f"+{self.winfo_x() + self.winfo_width() + 50}+{self.winfo_y()}")
+        #self.task_window.geometry(f"+{self.winfo_x() + self.winfo_width() + 50}+{self.winfo_y()}")
         self.task_window.resizable(False, False)
         # place a radiobutton for each task in tasks
         self.task_window.task_radiobuttons = []
@@ -126,7 +126,7 @@ class App(customtkinter.CTk):
         self.new_task_window = customtkinter.CTkToplevel(master=self)
         self.new_task_window.title("New Task")
         # place new_task_window right next to self.task_window with a gap of 50 px
-        self.new_task_window.geometry(f"+{self.task_window.winfo_x() + self.task_window.winfo_width() + 50}+{self.task_window.winfo_y()}")
+        #self.new_task_window.geometry(f"+{self.task_window.winfo_x() + self.task_window.winfo_width() + 50}+{self.task_window.winfo_y()}")
         self.new_task_window.resizable(False, False)
         # create a label and a entry for the name of the task
         self.new_task_window.name_label = customtkinter.CTkLabel(master=self.new_task_window, text="Name:")
@@ -160,7 +160,7 @@ class App(customtkinter.CTk):
         self.reset_window = customtkinter.CTkToplevel(master=self)
         self.reset_window.title("Reset Worktime")
         # place reset_window right next to self with a gap of 50 px
-        self.reset_window.geometry(f"+{self.winfo_x() + self.winfo_width() + 50}+{self.winfo_y()}")
+        #self.reset_window.geometry(f"+{self.winfo_x() + self.winfo_width() + 50}+{self.winfo_y()}")
         self.reset_window.resizable(False, False)
         # create a label
         self.reset_window.label = customtkinter.CTkLabel(master=self.reset_window, text="Are you sure you want to reset the worktime?")
@@ -205,7 +205,7 @@ class App(customtkinter.CTk):
         self.report_window = customtkinter.CTkToplevel(master=self)
         self.report_window.title("Report")
         # place report_window right next to self with a gap of 50 px
-        self.report_window.geometry(f"+{self.winfo_x() + self.winfo_width() + 50}+{self.winfo_y()}")
+        #self.report_window.geometry(f"+{self.winfo_x() + self.winfo_width() + 50}+{self.winfo_y()}")
         self.report_window.resizable(False, False)
         self.report_window.report_frame = customtkinter.CTkFrame(master=self.report_window)
         self.report_window.report_frame.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
