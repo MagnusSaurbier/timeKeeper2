@@ -1,6 +1,10 @@
-import tkinter
-import tkinter.messagebox
-import customtkinter
+import time
+try:
+    import tkinter
+    import tkinter.messagebox
+    import customtkinter
+except ImportError:
+    print("please install tkinter and customtkinter using\npip install tkinter\npip install customtkinter\nin the command prompt")
 from TXTConnector import TXTConnector
 
 
@@ -76,6 +80,12 @@ class App(customtkinter.CTk):
         self.makeWorktimeButton()
     # make function to end the worktime and change the "end worktime" button to "start worktime"
     def stop_worktime(self):
+        #return error if no task selected
+        if self.task == None:
+            #create messagebox
+            tkinter.messagebox.showerror("Error", "Please select a task first!")
+            return
+        # add end time to database
         self.worktime_menu.worktime_label.grid_forget()
         self.DBConnector.addEnd(self.task)
         #self.DBConnector.mydb.commit()
@@ -184,7 +194,7 @@ class App(customtkinter.CTk):
 
     #function to update worktime label
     def update_worktime(self):
-        self.worktime_menu.worktime_label.config(text=f"aktuelle Schicht: {self.getCurrentWorkTime()}")
+        self.worktime_menu.worktime_label.config(text=f"aktuelle Schicht: {self.getCurrentWorkTime()}h")
         self.after(10000, self.update_worktime)
     def getCurrentWorkTime(self):
         workSeconds = self.DBConnector.getCurrentWorkTime()

@@ -21,6 +21,8 @@ class TXTConnector:
             # note current time
             f.write(str(time.time())+"\n")
     def addEnd(self, Task):
+
+
         with open(self.endFile, "a") as f:
             # note current time
             f.write(str(time.time())+", "+Task+"\n")
