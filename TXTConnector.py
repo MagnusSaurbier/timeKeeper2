@@ -61,13 +61,33 @@ class TXTConnector:
         taskGroups = [line.split(",")[0].strip() for line in taskGroupLines]
         tasks = [line.split(",")[1].strip() for line in taskGroupLines]
         workTimes = [self.getWorkTime(task) for task in tasks]
+        i = 0
+        while i < len(workTimes):
+            if workTimes[i] == 0:
+                workTimes.pop(i)
+                taskGroups.pop(i)
+                tasks.pop(i)
+            else:
+                j = i + 1
+                while j < len(taskGroups):
+                    if taskGroups[j] == taskGroups[i]:
+                        workTimes[i] += workTimes[j]
+                        workTimes.pop(j)
+                        taskGroups.pop(j)
+                        tasks.pop(j)
+                    else:
+                        j += 1
+                i += 1
+        print(workTimes, taskGroups, tasks)
         return list(zip(taskGroups, workTimes))
     def getWorkTime(self, task):
         #return worktime of task
         with open(self.endFile, "r") as f:
             endLines = f.readlines()
+        with open(self.startFile, "r") as f:
+            startLines = f.readlines()
         tasks = [line.split(",")[1].strip() for line in endLines]
-        startTimes = [float(line.split(",")[0]) for line in endLines]
+        startTimes = [float(line.split(",")[0]) for line in startLines]
         endTimes = [float(line.split(",")[0]) for line in endLines]
         startTimes = [startTimes[i] for i in range(len(tasks)) if tasks[i] == task]
         endTimes = [endTimes[i] for i in range(len(tasks)) if tasks[i] == task]
