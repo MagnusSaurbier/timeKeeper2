@@ -14,12 +14,6 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 
 class App(customtkinter.CTk):
 
-    WIDTH = 800
-    HEIGHT = 400
-    surveyName = None
-    questionFile = None
-    answerFile = None
-    dataFile = None
     task = None
 
     def __init__(self, passwdFile, dBase, host):
@@ -27,7 +21,6 @@ class App(customtkinter.CTk):
         self.title("TimeKeeper v4.0")
         #self.DBConnector = DBConnector(open(passwdFile, 'r').readlines()[0], dBase, host)
         self.DBConnector = TXTConnector()
-        #self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         self.resizable(False, False)
         #self.minsize(App.WIDTH, App.HEIGHT)
 
@@ -65,14 +58,14 @@ class App(customtkinter.CTk):
     # make function to start the worktime and change the "start worktime" button to "stop worktime"
     def makeWorktimeButton(self):
         if self.DBConnector.clockIsRunning():
-            self.worktime_menu.start_worktime_button.config(text="Stop Worktime")
-            self.worktime_menu.start_worktime_button.config(command=self.stop_worktime)
+            self.worktime_menu.start_worktime_button.configure(text="Stop Worktime")
+            self.worktime_menu.start_worktime_button.configure(command=self.stop_worktime)
             #place worktime label in worktime menu and update worktime
             self.worktime_menu.worktime_label.grid(row=1, column=0, sticky="nsew", pady = 10, padx = 10)
             self.update_worktime()
         else:
-            self.worktime_menu.start_worktime_button.config(text="Start Worktime")
-            self.worktime_menu.start_worktime_button.config(command=self.start_worktime)
+            self.worktime_menu.start_worktime_button.configure(text="Start Worktime")
+            self.worktime_menu.start_worktime_button.configure(command=self.start_worktime)
 
     def start_worktime(self):
         self.DBConnector.addStart()
@@ -119,7 +112,7 @@ class App(customtkinter.CTk):
     def select_task_close(self):
         self.task = self.task_window.task_variable.get()
         # set select task button's text to the selected task
-        self.worktime_menu.select_task_button.config(text=self.task)
+        self.worktime_menu.select_task_button.configure(text=self.task)
         self.task_window.destroy()
     # to create a new task, create a toplevel, in which the "Name" and "Group" of the task can be entered
     def new_task(self):
@@ -176,7 +169,7 @@ class App(customtkinter.CTk):
 
     # insert a report to reset the worktime
     def reset_worktime(self):
-        self.DBConnector.insertReport(round(self.DBConnector.getWorkSum()/3600, 2))
+        self.DBConnector.reset(round(self.DBConnector.getWorkSum()/3600, 2))
         #self.DBConnector.mydb.commit()
         self.reset_window.destroy()
     # show the settings window
@@ -194,7 +187,7 @@ class App(customtkinter.CTk):
 
     #function to update worktime label
     def update_worktime(self):
-        self.worktime_menu.worktime_label.config(text=f"aktuelle Schicht: {self.getCurrentWorkTime()}h")
+        self.worktime_menu.worktime_label.configure(text=f"aktuelle Schicht: {self.getCurrentWorkTime()}h")
         self.after(10000, self.update_worktime)
     def getCurrentWorkTime(self):
         workSeconds = self.DBConnector.getCurrentWorkTime()
