@@ -1,13 +1,14 @@
 import time, os
 class TXTConnector:
+    path = "files/"
+    startFile = path+"start.txt"
+    endFile = path+"end.txt"
+    taskGroupFile = path+"taskGroup.txt"
+    resetFile = path+"reset.txt"
     def __init__(self):
-        self.path = "files/"
         #create folder at path if not exists
         if not os.path.exists(self.path):
             os.makedirs(self.path)
-        self.startFile = self.path+"start.txt"
-        self.endFile = self.path+"end.txt"
-        self.taskGroupFile = self.path+"taskGroup.txt"
         #create files if not exists
         if not os.path.exists(self.startFile):
             open(self.startFile, "w")
@@ -15,14 +16,14 @@ class TXTConnector:
             open(self.endFile, "w")
         if not os.path.exists(self.taskGroupFile):
             open(self.taskGroupFile, "w")
+        if not os.path.exists(self.resetFile):
+            open(self.resetFile, "w")
 
     def addStart(self):
         with open(self.startFile, "a") as f:
             # note current time
             f.write(str(time.time())+"\n")
     def addEnd(self, Task):
-
-
         with open(self.endFile, "a") as f:
             # note current time
             f.write(str(time.time())+", "+Task+"\n")
@@ -50,7 +51,7 @@ class TXTConnector:
         return time.time()-startTimes[-1]
     def getTasks(self):
         #return list of tasks
-        with open(self.endFile, "r") as f:
+        with open(self.taskGroupFile, "r") as f:
             endLines = f.readlines()
         tasks = [line.split(",")[1].strip() for line in endLines]
         return list(set(tasks))
@@ -96,6 +97,9 @@ class TXTConnector:
         #insert task into taskgroup
         with open(self.taskGroupFile, "a") as f:
             f.write(group+","+task+"\n")    #write task to taskgroup
+    def reset(self, worksum):
+        with open(self.resetFile, "a") as f:
+            f.write(f"{time.time()},{worksum}\n")
 
 # t = TXTConnector("test.txt")
 # t.addStart()
