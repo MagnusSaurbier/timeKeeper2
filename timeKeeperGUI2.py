@@ -94,7 +94,7 @@ class App(customtkinter.CTk):
         # place a radiobutton for each task in tasks
         self.task_window.task_radiobuttons = []
         # task_variable
-        options = self.DBConnector.getTasks()
+        options = self.DBConnector.readUniqueTasks()
         # if self.task in options: v = options.index(self.task)
         # else: v = 0
         v = self.task
@@ -109,6 +109,7 @@ class App(customtkinter.CTk):
         self.task_window.close_button = customtkinter.CTkButton(master=self.task_window, text="Select", command=self.select_task_close)
         self.task_window.close_button.grid(row=len(self.task_window.task_radiobuttons)+1, column=0, sticky="nsew", pady = 10, padx = 10)
     # select the chosen task and colse window will
+
     def select_task_close(self):
         self.task = self.task_window.task_variable.get()
         # set select task button's text to the selected task
