@@ -1,0 +1,13 @@
+Database Cleanup, Entwicklung
+GUI, Entwicklung
+Konzept, Konzept
+Meeting, Besprechung
+Meeting Remote Connection, Besprechung
+Migration, Entwicklung
+Migration Fehlersuche, Entwicklung
+Migration optimization, Entwicklung
+Migration Trennung Freitext, Entwicklung
+Orga, Konzept
+Remote Connection, Konzept
+research, Research
+TimeKeeper, Konzept

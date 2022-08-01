@@ -119,8 +119,6 @@ class TXTConnector:
         startTimes = self.readStartTimes()
         endTimes, tasks = self.readEndTimesAndTasks()
         lastReset = self.readLastReset()
-        print(task, tasks)
-        print([tasks[i] == task and endTimes[i] > lastReset for i in range(len(endTimes))])
         return sum([(endTimes[i]-startTimes[i] if tasks[i] == task and endTimes[i] > lastReset else 0)  for i in range(len(endTimes))])
 
     def insertTask(self, task, group):

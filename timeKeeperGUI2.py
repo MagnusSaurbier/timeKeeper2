@@ -18,7 +18,7 @@ class App(customtkinter.CTk):
 
     def __init__(self, passwdFile, dBase, host):
         super().__init__()
-        self.title("TimeKeeper v4.0")
+        self.title("TimeKeeper v5.0")
         #self.DBConnector = DBConnector(open(passwdFile, 'r').readlines()[0], dBase, host)
         self.DBConnector = TXTConnector()
         self.resizable(False, False)
