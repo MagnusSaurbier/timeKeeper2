@@ -1,3 +1,18 @@
+import fcntl
+import os
+import sys
+
+fh=0
+def run_once():
+    global fh
+    fh=open(os.path.realpath(__file__),'r')
+    try:
+        fcntl.flock(fh,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    except:
+        os._exit(0)
+
+run_once()
+
 import time
 try:
     import tkinter
@@ -20,7 +35,7 @@ class App(customtkinter.CTk):
         super().__init__()
         self.title("TimeKeeper v5.0")
         #self.DBConnector = DBConnector(open(passwdFile, 'r').readlines()[0], dBase, host)
-        self.DBConnector = TXTConnector()
+        self.DBConnector = TXTConnector(self)
         self.resizable(False, False)
         #self.minsize(App.WIDTH, App.HEIGHT)
 
@@ -32,9 +47,13 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
+        # create button to select work 
+        self.work_button = customtkinter.CTkButton(master=self, text=self.DBConnector.workPath.replace("/", ""), command=self.select_work)
+        self.work_button.grid(row=0, column=0, sticky="nsew", pady = 10, padx = 10)
+
         # create customtkinterframe for the worktime menu with corner_radius 10
-        self.worktime_menu = customtkinter.CTkFrame(master = self, corner_radius=10)
-        self.worktime_menu.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
+        self.worktime_menu = customtkinter.CTkFrame(master=self, corner_radius=10)
+        self.worktime_menu.grid(row=1, column=0, sticky="nsew", padx = 10, pady = 10)
         # create the buttons "start worktime" and "select task" inside of the workitme frame separated by 10 px in every direction
         
         self.worktime_menu.start_worktime_button = customtkinter.CTkButton(master=self.worktime_menu)
@@ -46,10 +65,9 @@ class App(customtkinter.CTk):
         self.worktime_menu.select_task_button.grid(row=0, column=1, sticky="nsew", pady = 10, padx = 10)
         # create worktime label in worktime menu
 
-
         # create customtkinterframe for Buttons "Abrechnung" and "Zurücksetzen"
         self.button_frame = customtkinter.CTkFrame(master=self, corner_radius=10)
-        self.button_frame.grid(row=1, column=0, sticky="nsew", pady = 10, padx = 10)
+        self.button_frame.grid(row=2, column=0, sticky="nsew", pady = 10, padx = 10)
         self.button_frame.abbrechen_button = customtkinter.CTkButton(master=self.button_frame, text="Abrechnung", command=self.report)
         self.button_frame.abbrechen_button.grid(row=0, column=0, sticky="nsew", pady = 10, padx = 10)
         self.button_frame.reset_button = customtkinter.CTkButton(master=self.button_frame, text="Zurücksetzen", command=self.reset)
@@ -62,15 +80,22 @@ class App(customtkinter.CTk):
             self.worktime_menu.start_worktime_button.configure(command=self.stop_worktime)
             #place worktime label in worktime menu and update worktime
             self.worktime_menu.worktime_label.grid(row=1, column=0, sticky="nsew", pady = 10, padx = 10)
+            # disable select work button
+            self.work_button.configure(state="disabled")
             self.update_worktime()
         else:
             self.worktime_menu.start_worktime_button.configure(text="Start Worktime")
             self.worktime_menu.start_worktime_button.configure(command=self.start_worktime)
+            # enable select work button
+            self.work_button.configure(state="normal")
 
     def start_worktime(self):
-        self.DBConnector.addStart()
-        #self.DBConnector.mydb.commit()
-        self.makeWorktimeButton()
+        if not self.DBConnector.clockIsRunning():
+            self.DBConnector.addStart()
+            #self.DBConnector.mydb.commit()
+            self.makeWorktimeButton()
+        else:
+            self.makeWorktimeButton()
     # make function to end the worktime and change the "end worktime" button to "start worktime"
     def stop_worktime(self):
         #return error if no task selected
@@ -78,10 +103,68 @@ class App(customtkinter.CTk):
             #create messagebox
             tkinter.messagebox.showerror("Error", "Please select a task first!")
             return
+        if not self.DBConnector.clockIsRunning():
+            # error: clock is not running
+            tkinter.messagebox.showerror("Error", "Clock is not running!")
+            return
         # add end time to database
         self.worktime_menu.worktime_label.grid_forget()
         self.DBConnector.addEnd(self.task)
         #self.DBConnector.mydb.commit()
+        self.makeWorktimeButton()
+
+    def select_work(self):
+        # create popup window to select work
+        self.work_menu = customtkinter.CTkToplevel(master=self)
+        self.work_menu.resizable(False, False)
+        self.work_menu.title("Select Work")
+
+        # new work button
+        self.work_menu.new_work_button = customtkinter.CTkButton(master=self.work_menu, text="New Work", command=self.new_work)
+        self.work_menu.new_work_button.grid(row=0, column=0, sticky="nsew", pady = 10, padx = 10)
+
+        self.work_menu.work_var = tkinter.StringVar(value = self.DBConnector.workPath)
+        # radiobuttons to select work from database (getAllWork())
+        self.work_menu.work_radiobuttons = []
+        for work in self.DBConnector.getAllWork():
+            self.work_menu.work_radiobuttons.append(customtkinter.CTkRadioButton(master=self.work_menu, text=work, variable=self.work_menu.work_var, value=work))
+            self.work_menu.work_radiobuttons[-1].grid(row=len(self.work_menu.work_radiobuttons), column=0, sticky="nsew", pady = 10, padx = 10)
+        
+        # create button to select work
+        self.work_menu.select_button = customtkinter.CTkButton(master=self.work_menu, text="Select", command=self.select_work_button)
+        self.work_menu.select_button.grid(row=len(self.work_menu.work_radiobuttons)+1, column=0, sticky="nsew", pady = 10, padx = 10)
+
+    def new_work(self):
+        # create popup window to create new work
+        self.new_work_menu = customtkinter.CTkToplevel(master=self)
+        self.new_work_menu.resizable(False, False)
+        self.new_work_menu.title("New Work")
+
+        # create entry to create new work
+        self.new_work_menu.work_entry = customtkinter.CTkEntry(master=self.new_work_menu)
+        self.new_work_menu.work_entry.grid(row=0, column=0, sticky="nsew", pady = 10, padx = 10)
+
+        # create button to create new work
+        self.new_work_menu.create_button = customtkinter.CTkButton(master=self.new_work_menu, text="Create", command=self.create_work)
+        self.new_work_menu.create_button.grid(row=1, column=0, sticky="nsew", pady = 10, padx = 10)
+    
+    def create_work(self):
+        # create new work in database
+        self.DBConnector.createWork(self.new_work_menu.work_entry.get())
+        self.work_button.configure(text = self.new_work_menu.work_entry.get())
+        #self.DBConnector.mydb.commit()
+        # close popup window
+        self.new_work_menu.destroy()
+        self.work_menu.destroy()
+
+    def select_work_button(self):
+        # get selected work
+        self.DBConnector.workPath = f"{self.work_menu.work_var.get()}/"
+        # close popup window
+        self.work_menu.destroy()
+        # set select work button to selected work
+        self.work_button.configure(text=f"{self.DBConnector.workPath[:-1]}")
+        # update worktime button
         self.makeWorktimeButton()
 
     # function to select the task, that creates a customtkinter toplevel window, in which a task from self.tasks can be selected via radionbuttons or a new task can be created

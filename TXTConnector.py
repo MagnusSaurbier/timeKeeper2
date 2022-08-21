@@ -1,26 +1,89 @@
 from logging import lastResort
 import time, os
 class TXTConnector:
-    path = "files/"
-    startFile = path+"start.txt"
-    endFile = path+"end.txt"
-    taskGroupFile = path+"taskGroup.txt"
-    resetFile = path+"reset.txt"
+    filesPath = "files/"
+    workPath = ""
+    startFile = "start.txt"
+    endFile = "end.txt"
+    taskGroupFile = "taskGroup.txt"
+    resetFile = "reset.txt"
     timeFormat = "%Y-%m-%d %H:%M:%S"
     fileLineSeparator = ", "
-    def __init__(self):
+
+    interruptedString = "__INTERRUPTED__"
+    def __init__(self, master):
+        self.master = master
+        self.workPath = self.getLatestWork()
+        print(self.workPath)
         #create folder at path if not exists
-        if not os.path.exists(self.path):
-            os.makedirs(self.path)
+        if not os.path.exists(self.filesPath+self.workPath):
+            os.makedirs(self.filesPath+self.workPath)
         #create files if not exists
-        if not os.path.exists(self.startFile):
-            open(self.startFile, "w")
-        if not os.path.exists(self.endFile):
-            open(self.endFile, "w")
-        if not os.path.exists(self.taskGroupFile):
-            open(self.taskGroupFile, "w")
-        if not os.path.exists(self.resetFile):
-            open(self.resetFile, "w")
+        if not os.path.exists(self.getStartFile()):
+            open(self.getStartFile(), "w")
+        if not os.path.exists(self.getEndFile()):
+            open(self.getEndFile(), "w")
+        if not os.path.exists(self.getTaskGroupFile()):
+            open(self.getTaskGroupFile(), "w")
+        if not os.path.exists(self.getResetFile()):
+            open(self.getResetFile(), "w")
+
+    def getLatestWork(self):
+        """returns work that has been worked on in last shift"""
+        # scan get all folders in files path
+        folders = self.getAllWork()
+        # if no folders exist, return 0
+        if len(folders) == 0:
+            return 0
+        # latest endTime
+        latestEndTime = 0
+        # latest endTime folder
+        latestEndTimeFolder = ""
+        # iterate through all directories
+        for folder in folders:
+            self.workPath = f"{folder}/"
+            # get last entry in endFile
+            endTimes, tasks = self.readEndTimesAndTasks()
+            # if endFile is empty, continue
+            if len(endTimes) == 0:
+                continue
+            # if endTime is after latestEndTime, set latestEndTime to endTime and latestEndTimeFolder to workPath
+            
+            if endTimes[-1] > latestEndTime:
+                latestEndTime = endTimes[-1]
+                latestEndTimeFolder = self.workPath
+        print(latestEndTimeFolder)
+        # if latestEndTime is 0, return None
+        if latestEndTime == 0:
+            return None
+        # else return latestEndTimeFolder
+        return latestEndTimeFolder
+
+    def getAllWork(self):
+        """returns all folders in files path"""
+        return [f for f in os.listdir(self.filesPath) if os.path.isdir(self.filesPath+f)]
+
+    def createWork(self, workName):
+        """creates new work folder with name workName"""
+        self.workPath = workName+"/"
+        os.makedirs(self.filesPath+self.workPath)
+        open(self.getStartFile(), "w")
+        open(self.getEndFile(), "w")
+        open(self.getTaskGroupFile(), "w")
+        open(self.getResetFile(), "w")
+    
+    def getStartFile(self):
+        """returns path to start file"""
+        return self.filesPath+self.workPath+self.startFile
+    def getEndFile(self):
+        """returns path to end file"""
+        return self.filesPath+self.workPath+self.endFile
+    def getTaskGroupFile(self):
+        """returns path to task group file"""
+        return self.filesPath+self.workPath+self.taskGroupFile
+    def getResetFile(self):
+        """returns path to reset file"""
+        return self.filesPath+self.workPath+self.resetFile
 
     def getNow(self):
         """returns current datetime as string"""
@@ -38,17 +101,17 @@ class TXTConnector:
 
     def readStartTimes(self):
         """returns list of start times as timestamps"""
-        lines = self.readFile(self.startFile)
+        lines = self.readFile(self.getStartFile())
         return [self.getTimestamp(line[0]) for line in lines]
 
     def readEndTimesAndTasks(self):
         """returns list of endTimes as timestamps and list of Tasks"""
-        lines = self.readFile(self.endFile)
+        lines = self.readFile(self.getEndFile())
         return [self.getTimestamp(line[0]) for line in lines], [line[1] for line in lines]
 
     def readTasksAndGroups(self):
         """returns list of tasks and list of groups"""
-        lines = self.readFile(self.taskGroupFile)
+        lines = self.readFile(self.getTaskGroupFile())
         return [line[0] for line in lines], [line[1] for line in lines]
 
     def readUniqueTasks(self):
@@ -58,24 +121,26 @@ class TXTConnector:
 
     def readLastReset(self):
         """returns last reset as timestamp"""
-        lines = self.readFile(self.resetFile)
+        lines = self.readFile(self.getResetFile())
+        if len(lines) == 0:
+            return 0
         return self.getTimestamp(lines[-1][0])
 
     def addStart(self):
         """writes start now as datetime string to start file"""
-        with open(self.startFile, "a") as f:
+        with open(self.getStartFile(), "a") as f:
             f.write(self.getNow()+"\n")
     
     def addEnd(self, Task):
         """writes now as datetime string and task to end file"""
-        with open(self.endFile, "a") as f:
+        with open(self.getEndFile(), "a") as f:
             f.write(self.getNow()+self.fileLineSeparator+Task+"\n")
 
     def clockIsRunning(self):
         """returns true if clock is running"""
-        with open(self.startFile, "r") as f:
+        with open(self.getStartFile(), "r") as f:
             startLines = len(f.readlines())
-        with open(self.endFile, "r") as f:
+        with open(self.getEndFile(), "r") as f:
             endLines = len(f.readlines())
         return startLines > endLines
 
@@ -123,15 +188,21 @@ class TXTConnector:
 
     def insertTask(self, task, group):
         """insert task and group into taskgroup"""
-        with open(self.taskGroupFile, "a") as f:
+        with open(self.getTaskGroupFile(), "a") as f:
             f.write(task+self.fileLineSeparator+group+"\n")    #write task to taskgroup
 
     def reset(self, worksum):
         """writes nowTime as datetime string and worksum to reset file"""
-        with open(self.resetFile, "a") as f:
+        with open(self.getResetFile(), "a") as f:
             f.write(self.getNow()+self.fileLineSeparator+str(worksum)+"\n")
 
-
+    def deleteLastEndTime(self):
+        """deletes last end time"""
+        with open(self.getEndFile, "r") as f:
+            lines = f.readlines()
+        with open(self.getEndFile, "w") as f:
+            for line in lines[:-1]:
+                f.write(line)
     
 
 # t = TXTConnector("test.txt")
