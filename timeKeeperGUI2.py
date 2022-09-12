@@ -134,6 +134,9 @@ class App(customtkinter.CTk):
         self.work_menu.select_button = customtkinter.CTkButton(master=self.work_menu, text="Select", command=self.select_work_button)
         self.work_menu.select_button.grid(row=len(self.work_menu.work_radiobuttons)+1, column=0, sticky="nsew", pady = 10, padx = 10)
 
+        # select work on RETURN
+        self.work_menu.bind("<Return>", lambda event: self.select_work_button())
+
     def new_work(self):
         # create popup window to create new work
         self.new_work_menu = customtkinter.CTkToplevel(master=self)
@@ -158,12 +161,17 @@ class App(customtkinter.CTk):
         self.work_menu.destroy()
 
     def select_work_button(self):
+        print("Select work")
         # get selected work
         self.DBConnector.workPath = f"{self.work_menu.work_var.get()}/"
         # close popup window
         self.work_menu.destroy()
         # set select work button to selected work
         self.work_button.configure(text=f"{self.DBConnector.workPath[:-1]}")
+        # set task to task that has been last worked on
+        self.task = self.DBConnector.readEndTimesAndTasks()[1][-1]
+        self.worktime_menu.select_task_button.configure(text = self.task)
+
         # update worktime button
         self.makeWorktimeButton()
 
@@ -191,6 +199,7 @@ class App(customtkinter.CTk):
         # create a button to close the window
         self.task_window.close_button = customtkinter.CTkButton(master=self.task_window, text="Select", command=self.select_task_close)
         self.task_window.close_button.grid(row=len(self.task_window.task_radiobuttons)+1, column=0, sticky="nsew", pady = 10, padx = 10)
+        self.task_window.bind("<Return>", lambda event: self.select_task_close())
     # select the chosen task and colse window will
 
     def select_task_close(self):
@@ -218,6 +227,7 @@ class App(customtkinter.CTk):
         # create a button to create the task
         self.new_task_window.create_button = customtkinter.CTkButton(master=self.new_task_window, text="Create", command=self.create_task)
         self.new_task_window.create_button.grid(row=2, column=0, sticky="nsew", padx = 10, pady = 10)
+        self.new_task_window.bind("<Return>", lambda event: self.create_task())
         # create a button to close the window
         self.new_task_window.close_button = customtkinter.CTkButton(master=self.new_task_window, text="Close", command=self.new_task_window.destroy)
         self.new_task_window.close_button.grid(row=2, column=1, sticky="nsew", padx = 10, pady = 10)
