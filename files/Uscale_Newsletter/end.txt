@@ -18,3 +18,23 @@
 2022-08-18 15:45:25, Research
 2022-08-18 16:35:25, Research
 2022-08-18 16:40:06, Abstimmung Website
+2022-08-23 11:46:58, Research
+2022-08-30 12:38:18, Abstimmung Website
+2022-08-30 13:02:44, Abstimmung Website
+2022-08-30 13:31:48, Databse init
+2022-08-30 17:52:08, Databse init
+2022-08-30 22:43:34, Abstimmung Website
+2022-09-01 12:21:20, Server init
+2022-09-01 15:52:59, Server init
+2022-09-01 17:34:35, Server init
+2022-09-01 19:35:39, Server init
+2022-09-01 19:49:50, Server init
+2022-09-14 11:05:09, Server init
+2022-09-14 12:33:29, Meeting
+2022-09-19 14:23:11, Meeting
+2022-09-19 15:53:38, Server init
+2022-09-19 16:32:56, Server init
+2022-09-19 18:40:21, Server init
+2022-09-19 21:15:39, Meeting Extern
+2022-09-19 21:46:45, Server init
+2022-09-21 13:09:38, Research

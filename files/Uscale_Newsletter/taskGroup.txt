@@ -2,3 +2,7 @@ Research, Research
 concept, Konzept
 RaspiEinrichtung, Entwicklung
 Abstimmung Website, Meeting
+Databse init, Entwicklung
+Server init, Entwicklung
+Meeting, Meeting
+Meeting Extern, Meeting

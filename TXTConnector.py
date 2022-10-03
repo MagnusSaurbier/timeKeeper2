@@ -7,6 +7,7 @@ class TXTConnector:
     endFile = "end.txt"
     taskGroupFile = "taskGroup.txt"
     resetFile = "reset.txt"
+    configFile = "config.txt"
     timeFormat = "%Y-%m-%d %H:%M:%S"
     fileLineSeparator = ", "
 
@@ -18,6 +19,9 @@ class TXTConnector:
         #create folder at path if not exists
         if not os.path.exists(self.filesPath+self.workPath):
             os.makedirs(self.filesPath+self.workPath)
+        self.cleanWork()
+
+    def cleanWork(self):
         #create files if not exists
         if not os.path.exists(self.getStartFile()):
             open(self.getStartFile(), "w")
@@ -27,6 +31,8 @@ class TXTConnector:
             open(self.getTaskGroupFile(), "w")
         if not os.path.exists(self.getResetFile()):
             open(self.getResetFile(), "w")
+        if not os.path.exists(self.getConfigFile()):
+            open(self.getConfigFile(), "w")
 
     def getLatestWork(self):
         """returns work that has been worked on in last shift"""
@@ -71,6 +77,7 @@ class TXTConnector:
         open(self.getEndFile(), "w")
         open(self.getTaskGroupFile(), "w")
         open(self.getResetFile(), "w")
+        open(self.getConfigFile(), "w")
     
     def getStartFile(self):
         """returns path to start file"""
@@ -84,7 +91,26 @@ class TXTConnector:
     def getResetFile(self):
         """returns path to reset file"""
         return self.filesPath+self.workPath+self.resetFile
-
+    def getConfigFile(self):
+        """returns path to config file"""
+        return self.filesPath+self.workPath+self.configFile
+    def readConfigFile(self):
+        """returns dictionary with all entries of config file"""
+        configDict = {}
+        for line in open(self.getConfigFile()).readlines():
+            print(line)
+            a = line.replace(" ", "").split("=")
+            if len(a) != 2:
+                print(f"Check syntax in {self.getConfigFile()}")
+                raise Exception
+            configDict[a[0]] = a[1]
+        return configDict
+    def writeConfigFile(self, dict):
+        """writes dictionary to config file"""
+        with open(self.getConfigFile(), "w") as f:
+            for key in dict:
+                f.write(f"{key} = {dict[key]}")
+    
     def getNow(self):
         """returns current datetime as string"""
         return str(time.strftime(self.timeFormat))

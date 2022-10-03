@@ -1,6 +1,8 @@
 import fcntl
 import os
 import sys
+from threading import currentThread
+from timeKeeper import TimeKeeper
 
 fh=0
 def run_once():
@@ -30,10 +32,12 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 class App(customtkinter.CTk):
 
     task = None
+    defaultWage = 15
 
     def __init__(self, passwdFile, dBase, host):
         super().__init__()
         self.title("TimeKeeper v5.0")
+        self.timeKeeper = TimeKeeper(self)
         #self.DBConnector = DBConnector(open(passwdFile, 'r').readlines()[0], dBase, host)
         self.DBConnector = TXTConnector(self)
         self.resizable(False, False)
@@ -48,8 +52,15 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(1, weight=1)
 
         # create button to select work 
-        self.work_button = customtkinter.CTkButton(master=self, text=self.DBConnector.workPath.replace("/", ""), command=self.select_work)
+        self.work_frame = customtkinter.CTkFrame(master=self, corner_radius=10)
+        self.work_frame.grid(row = 0, column = 0, sticky="nsew", pady = 10, padx = 10)
+        self.work_button = customtkinter.CTkButton(master=self.work_frame, text=self.DBConnector.workPath.replace("/", ""), command=self.select_work)
         self.work_button.grid(row=0, column=0, sticky="nsew", pady = 10, padx = 10)
+        self.wage_label = customtkinter.CTkLabel(master=self.work_frame, text = "wage:")
+        self.wage_label.grid(row=0, column=1, sticky="nsew", pady = 10, padx = 10)
+        self.wage_entry = customtkinter.CTkEntry(master=self.work_frame, text=self.readWage())
+        self.wage_entry.grid(row=0, column=2, sticky="nsew", pady = 10, padx = 10)
+        self.bind("<Return>", lambda event: self.writeWage(self.wage_entry.get()))
 
         # create customtkinterframe for the worktime menu with corner_radius 10
         self.worktime_menu = customtkinter.CTkFrame(master=self, corner_radius=10)
@@ -164,6 +175,7 @@ class App(customtkinter.CTk):
         print("Select work")
         # get selected work
         self.DBConnector.workPath = f"{self.work_menu.work_var.get()}/"
+        self.DBConnector.cleanWork()
         # close popup window
         self.work_menu.destroy()
         # set select work button to selected work
@@ -286,6 +298,24 @@ class App(customtkinter.CTk):
     def getCurrentWorkTime(self):
         workSeconds = self.DBConnector.getCurrentWorkTime()
         return round(workSeconds/3600, 2)
+    
+    def getWage(self):
+        if self.wage_entry.get() != None:
+            return float(self.wage_entry.get())
+        else:
+            tkinter.messagebox.showerror("Insert Wage!")
+            return False
+    def readWage(self):
+        config = self.DBConnector.readConfigFile()
+        if "wage" in config:
+            return config["wage"]
+        else:
+            return self.defaultWage
+    def writeWage(self, wage):
+        print("write")
+        config = self.DBConnector.readConfigFile()
+        config["wage"] = wage
+        self.DBConnector.writeConfigFile(config)
 
     #create toplevel for report
     def report(self):
@@ -297,7 +327,9 @@ class App(customtkinter.CTk):
         self.report_window.report_frame = customtkinter.CTkFrame(master=self.report_window)
         self.report_window.report_frame.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
         report = self.DBConnector.report()
-        wage = 15
+        config = self.DBConnector.readConfigFile()
+        wage = self.getWage()
+        if not wage: return False
         moneysum = 0
         timesum = 0
         # create list of report labels
@@ -329,13 +361,21 @@ class App(customtkinter.CTk):
         # create label to present total money as total_money_label
         self.report_window.total_money_label = customtkinter.CTkLabel(master=self.report_window.report_frame2, text=f"Gesamtgehalt: {round(moneysum)}€")
         self.report_window.total_money_label.grid(row=0, column=2, sticky="nsew", padx = 10, pady = 10)
-        # create button to close the report window
+        
+        #Buttons
+        self.report_window.report_frame3 = customtkinter.CTkFrame(master=self.report_window)
+        self.report_window.report_frame3.grid(row=1, column=0, sticky="nsew", padx = 10, pady = 10)
+
         self.report_window.close_button = customtkinter.CTkButton(master=self.report_window.report_frame2, text="Close", command=self.report_window.destroy)
         self.report_window.close_button.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
-        
-        
 
- 
+        self.report_window.save_button = customtkinter.CTkButton(master=self.report_window.report_frame2, text="Save", command=self.saveAbrechnung)
+        self.report_window.save_button.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
+    
+    def saveAbrechnung(self):
+        self.report_window.destroy()
+        self.timeKeeper.saveAbrechnung()
+    
     def change_mode(self):
         if self.switch_2.get() == 1:
             customtkinter.set_appearance_mode("dark")
@@ -351,9 +391,3 @@ class App(customtkinter.CTk):
 if __name__ == "__main__":
     app = App("passwd.txt", "timekeeper", "localhost")
     app.start()
-
-
-
-
-
-
