@@ -1,1 +1,8 @@
 wage = 17.5
+job = Erstellen eines Werbefilms zur Vorstellung der RSC Produktfamilie
+worker = Magnus Saurbier
+client = RSattler Consulting
+client_address = Standort Dortmund
+client_street = Linnigmannstraße 21
+client_place = 44269 Dortmund
+bill_nr = 78

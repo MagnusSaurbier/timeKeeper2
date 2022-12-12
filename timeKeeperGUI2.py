@@ -1,5 +1,6 @@
 import fcntl
 import os
+from re import M
 import sys
 from threading import currentThread
 from timeKeeper import TimeKeeper
@@ -38,8 +39,7 @@ class App(customtkinter.CTk):
         super().__init__()
         self.title("TimeKeeper v5.0")
         self.timeKeeper = TimeKeeper(self)
-        #self.DBConnector = DBConnector(open(passwdFile, 'r').readlines()[0], dBase, host)
-        self.DBConnector = TXTConnector(self)
+        self.DBConnector:TXTConnector = TXTConnector(self)
         self.resizable(False, False)
         #self.minsize(App.WIDTH, App.HEIGHT)
 
@@ -83,6 +83,8 @@ class App(customtkinter.CTk):
         self.button_frame.abbrechen_button.grid(row=0, column=0, sticky="nsew", pady = 10, padx = 10)
         self.button_frame.reset_button = customtkinter.CTkButton(master=self.button_frame, text="Zurücksetzen", command=self.reset)
         self.button_frame.reset_button.grid(row=0, column=1, sticky="nsew", pady = 10, padx = 10)
+
+        self.load_work(self.DBConnector.workPath.replace("/", ""))
 
     # make function to start the worktime and change the "start worktime" button to "stop worktime"
     def makeWorktimeButton(self):
@@ -155,37 +157,59 @@ class App(customtkinter.CTk):
         self.new_work_menu.title("New Work")
 
         # create entry to create new work
-        self.new_work_menu.work_entry = customtkinter.CTkEntry(master=self.new_work_menu)
-        self.new_work_menu.work_entry.grid(row=0, column=0, sticky="nsew", pady = 10, padx = 10)
+        self.new_work_menu.entries = {
+            "title":None,
+            "job":None,
+            "worker":None,
+            "wage":None,
+            "client":None,
+            "client_address":None,
+            "client_street":None,
+            "client_place":None,
+        }
+
+        for i,key in enumerate(self.new_work_menu.entries):
+            customtkinter.CTkLabel(master = self.new_work_menu, text = key+":").grid(row=i, column=0, pady = 10, padx = 10)
+            self.new_work_menu.entries[key] = self.new_work_menu.work_entry = customtkinter.CTkEntry(master=self.new_work_menu)
+            self.new_work_menu.entries[key].grid(row=i, column=1, sticky="nsew", pady = 10, padx = 10)
 
         # create button to create new work
         self.new_work_menu.create_button = customtkinter.CTkButton(master=self.new_work_menu, text="Create", command=self.create_work)
-        self.new_work_menu.create_button.grid(row=1, column=0, sticky="nsew", pady = 10, padx = 10)
+        self.new_work_menu.create_button.grid(row=i+1, column=0, sticky="nsew", pady = 10, padx = 10)
     
     def create_work(self):
         # create new work in database
-        self.DBConnector.createWork(self.new_work_menu.work_entry.get())
-        self.work_button.configure(text = self.new_work_menu.work_entry.get())
-        #self.DBConnector.mydb.commit()
+        work = self.new_work_menu.work_entry.get()
+        configDict = {}
+        for key in self.new_work_menu.entries:
+            configDict[key] = self.new_work_menu.entries[key].get()
+        self.DBConnector.createWork(configDict)
+        self.load_work(work)
+
         # close popup window
         self.new_work_menu.destroy()
         self.work_menu.destroy()
 
-    def select_work_button(self):
-        print("Select work")
-        # get selected work
-        self.DBConnector.workPath = f"{self.work_menu.work_var.get()}/"
+    def load_work(self, work):
+        self.DBConnector.workPath = f"{work}/"
+        self.wage_entry.delete(0, tkinter.END)
+        self.wage_entry.insert(0, str(self.DBConnector.readConfigFile()["wage"]))
         self.DBConnector.cleanWork()
-        # close popup window
-        self.work_menu.destroy()
         # set select work button to selected work
         self.work_button.configure(text=f"{self.DBConnector.workPath[:-1]}")
         # set task to task that has been last worked on
-        self.task = self.DBConnector.readEndTimesAndTasks()[1][-1]
+        a = self.DBConnector.readEndTimesAndTasks()[1]
+        self.task = a[-1] if a else None
         self.worktime_menu.select_task_button.configure(text = self.task)
-
         # update worktime button
         self.makeWorktimeButton()
+
+    def select_work_button(self):
+        print("Select work")
+        # get selected work
+        self.load_work(self.work_menu.work_var.get())
+        # close popup window
+        self.work_menu.destroy()
 
     # function to select the task, that creates a customtkinter toplevel window, in which a task from self.tasks can be selected via radionbuttons or a new task can be created
     def select_task(self):
@@ -197,7 +221,7 @@ class App(customtkinter.CTk):
         # place a radiobutton for each task in tasks
         self.task_window.task_radiobuttons = []
         # task_variable
-        options = self.DBConnector.readUniqueTasks()
+        options = self.DBConnector.readGroups()
         # if self.task in options: v = options.index(self.task)
         # else: v = 0
         v = self.task
@@ -327,7 +351,6 @@ class App(customtkinter.CTk):
         self.report_window.report_frame = customtkinter.CTkFrame(master=self.report_window)
         self.report_window.report_frame.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
         report = self.DBConnector.report()
-        config = self.DBConnector.readConfigFile()
         wage = self.getWage()
         if not wage: return False
         moneysum = 0
@@ -364,13 +387,13 @@ class App(customtkinter.CTk):
         
         #Buttons
         self.report_window.report_frame3 = customtkinter.CTkFrame(master=self.report_window)
-        self.report_window.report_frame3.grid(row=1, column=0, sticky="nsew", padx = 10, pady = 10)
+        self.report_window.report_frame3.grid(row=2, column=0, sticky="nsew", padx = 10, pady = 10)
 
-        self.report_window.close_button = customtkinter.CTkButton(master=self.report_window.report_frame2, text="Close", command=self.report_window.destroy)
+        self.report_window.close_button = customtkinter.CTkButton(master=self.report_window.report_frame3, text="Close", command=self.report_window.destroy)
         self.report_window.close_button.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
 
-        self.report_window.save_button = customtkinter.CTkButton(master=self.report_window.report_frame2, text="Save", command=self.saveAbrechnung)
-        self.report_window.save_button.grid(row=0, column=0, sticky="nsew", padx = 10, pady = 10)
+        self.report_window.save_button = customtkinter.CTkButton(master=self.report_window.report_frame3, text="Save", command=self.saveAbrechnung)
+        self.report_window.save_button.grid(row=0, column=1, sticky="nsew", padx = 10, pady = 10)
     
     def saveAbrechnung(self):
         self.report_window.destroy()

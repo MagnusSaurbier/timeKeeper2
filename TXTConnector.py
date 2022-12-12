@@ -69,15 +69,17 @@ class TXTConnector:
         """returns all folders in files path"""
         return [f for f in os.listdir(self.filesPath) if os.path.isdir(self.filesPath+f)]
 
-    def createWork(self, workName):
+    def createWork(self, configDict):
         """creates new work folder with name workName"""
-        self.workPath = workName+"/"
+        self.workPath = configDict["title"]+"/"
+        print(f"wp: {self.workPath}")
         os.makedirs(self.filesPath+self.workPath)
         open(self.getStartFile(), "w")
         open(self.getEndFile(), "w")
         open(self.getTaskGroupFile(), "w")
         open(self.getResetFile(), "w")
         open(self.getConfigFile(), "w")
+        self.writeConfigFile(configDict)
     
     def getStartFile(self):
         """returns path to start file"""
@@ -99,17 +101,18 @@ class TXTConnector:
         configDict = {}
         for line in open(self.getConfigFile()).readlines():
             print(line)
-            a = line.replace(" ", "").split("=")
+            a = line.replace("\n", "").replace(" =", "=").replace("= ", "=").split("=")
             if len(a) != 2:
                 print(f"Check syntax in {self.getConfigFile()}")
                 raise Exception
             configDict[a[0]] = a[1]
+        print(configDict)
         return configDict
     def writeConfigFile(self, dict):
         """writes dictionary to config file"""
         with open(self.getConfigFile(), "w") as f:
             for key in dict:
-                f.write(f"{key} = {dict[key]}")
+                f.write(f"{key} = {dict[key]}\n")
     
     def getNow(self):
         """returns current datetime as string"""
@@ -128,7 +131,7 @@ class TXTConnector:
     def readStartTimes(self):
         """returns list of start times as timestamps"""
         lines = self.readFile(self.getStartFile())
-        return [self.getTimestamp(line[0]) for line in lines]
+        return [self.getTimestamp(line[0].split(",")[0]) for line in lines]
 
     def readEndTimesAndTasks(self):
         """returns list of endTimes as timestamps and list of Tasks"""
@@ -140,10 +143,10 @@ class TXTConnector:
         lines = self.readFile(self.getTaskGroupFile())
         return [line[0] for line in lines], [line[1] for line in lines]
 
-    def readUniqueTasks(self):
+    def readGroups(self):
         """return list of unique tasks"""
         tasks, groups = self.readTasksAndGroups()
-        return list(set(tasks))
+        return list(set(groups))
 
     def readLastReset(self):
         """returns last reset as timestamp"""
@@ -151,6 +154,11 @@ class TXTConnector:
         if len(lines) == 0:
             return 0
         return self.getTimestamp(lines[-1][0])
+
+    def countResets(self):
+        """returns number of resets"""
+        lines = self.readFile(self.getResetFile())
+        return len(lines)
 
     def addStart(self):
         """writes start now as datetime string to start file"""
@@ -184,33 +192,19 @@ class TXTConnector:
 
     def report(self):
         """return list of taskgroups and their worktimes"""
-        tasks, taskGroups = self.readTasksAndGroups()
-        workTimes = [self.getWorkTime(task) for task in tasks]
-        i = 0
-        while i < len(workTimes):
-            if workTimes[i] == 0:
-                workTimes.pop(i)
-                taskGroups.pop(i)
-                tasks.pop(i)
-            else:
-                j = i + 1
-                while j < len(taskGroups):
-                    if taskGroups[j] == taskGroups[i]:
-                        workTimes[i] += workTimes[j]
-                        workTimes.pop(j)
-                        taskGroups.pop(j)
-                        tasks.pop(j)
-                    else:
-                        j += 1
-                i += 1
-        return list(zip(taskGroups, workTimes))
+        groups = self.readGroups()
+        workTimes = [self.getWorkTime(group) for group in groups]
+        # remove 0 worktimes
+        print(workTimes, groups)
+        report = [r for r in zip(groups, workTimes) if r[1] > 1800]
+        return report
 
-    def getWorkTime(self, task):
+    def getWorkTime(self, group):
         """return worktime of task"""
         startTimes = self.readStartTimes()
         endTimes, tasks = self.readEndTimesAndTasks()
         lastReset = self.readLastReset()
-        return sum([(endTimes[i]-startTimes[i] if tasks[i] == task and endTimes[i] > lastReset else 0)  for i in range(len(endTimes))])
+        return sum([(endTimes[i]-startTimes[i] if tasks[i] == group and endTimes[i] > lastReset else 0)  for i in range(len(endTimes))])
 
     def insertTask(self, task, group):
         """insert task and group into taskgroup"""

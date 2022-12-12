@@ -1,1 +1,8 @@
-wage = 15
+wage = 20
+job = Maria DB Anbindung UScale-Umfragedaten
+worker = Magnus Saurbier
+client = UScale GmbH
+client_address = Impact Hub Stuttgart
+client_street = Quellenstraße 7a
+client_place = 70376 Stuttgart
+bill_nr = 53

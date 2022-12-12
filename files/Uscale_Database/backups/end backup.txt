@@ -1,0 +1,172 @@
+2022-02-03 15:09:48, Migration Fehlersuche
+2022-02-03 22:52:25, Migration Trennung Freitext
+2022-02-03 23:55:13, Migration Trennung Freitext
+2022-02-04 11:11:37, Migration Trennung Freitext
+2022-02-04 12:11:57, Meeting
+2022-02-04 12:16:34, Remote Connection
+2022-02-05 22:40:39, Remote Connection
+2022-02-06 01:24:16, Remote Connection
+2022-02-07 15:00:46, Meeting
+2022-02-07 15:40:00, Migration
+2022-02-07 17:51:22, Migration
+2022-02-11 11:41:15, Meeting Remote Connection
+2022-02-14 14:44:41, Meeting Remote Connection
+2022-02-14 23:25:12, Remote Connection
+2022-02-18 13:23:53, Meeting Remote Connection
+2022-02-19 18:39:20, Database Cleanup
+2022-02-20 17:29:36, Database Cleanup
+2022-03-03 17:55:28, Meeting
+2022-03-07 15:41:48, Meeting
+2022-03-10 16:01:55, Migration
+2022-03-10 20:18:05, Migration Fehlersuche
+2022-03-11 12:10:55, Meeting
+2022-03-11 14:53:57, Migration Fehlersuche
+2022-03-18 12:13:16, Meeting
+2022-04-01 12:40:35, Meeting
+2022-04-01 15:21:46, Orgao
+2022-04-03 00:30:24, Migration
+2022-04-11 15:34:18, Meeting
+2022-04-11 16:00:49, TimeKeeper
+2022-04-11 16:01:19, TimeKeeper
+2022-04-11 16:01:41, TimeKeeper
+2022-04-11 16:33:32, TimeKeeper
+2022-04-11 16:55:18, TimeKeeper
+2022-04-11 17:00:20, Konzept
+2022-04-12 13:35:53, Migration
+2022-04-12 16:06:48, Migration
+2022-04-12 20:27:35, Migration
+2022-04-14 17:02:42, Migration
+2022-04-14 17:40:08, Migration
+2022-04-14 19:12:02, Migration
+2022-04-14 20:05:02, Migration
+2022-05-05 15:06:29, Meeting
+2022-05-15 23:51:19, Konzept
+2022-05-20 14:39:14, Meeting
+2022-05-20 18:14:56, Migration
+2022-05-20 19:22:11, Migration
+2022-05-20 19:45:18, Migration
+2022-05-20 23:38:56, research
+2022-05-21 12:54:39, GUI
+2022-05-21 14:17:42, GUI
+2022-05-21 16:01:01, GUI
+2022-05-21 22:24:14, GUI
+2022-05-22 01:22:01, GUI
+2022-05-22 11:51:08, GUI
+2022-05-22 17:27:21, GUI
+2022-05-22 18:38:49, GUI
+2022-05-30 16:14:48, Meeting
+2022-05-30 17:49:25, Meeting
+2022-06-01 10:05:46, GUI
+2022-06-01 10:20:33, GUI
+2022-06-01 10:52:18, TimeKeeper
+2022-06-01 10:54:35, TimeKeeper
+2022-06-01 10:55:28, TimeKeeper
+2022-06-01 10:56:27, TimeKeeper
+2022-06-27 13:55:57, Meeting
+2022-06-27 15:05:08, Meeting
+2022-06-30 17:11:13, TimeKeeper
+2022-07-01 15:10:33, Migration
+2022-07-01 15:48:38, Meeting
+2022-07-01 17:08:57, Migration
+2022-07-01 17:46:54, None
+2022-07-01 17:53:55, TimeKeeper
+2022-07-04 20:34:32, Migration Fehlersuche
+2022-07-08 22:59:38, Migration Fehlersuche
+2022-07-13 21:14:09, Migration
+2022-07-15 17:54:32, Migration optimization
+2022-07-15 18:16:51, Migration optimization
+2022-07-15 21:42:59, Migration optimization
+2022-07-16 21:17:11, Migration optimization
+2022-07-16 21:40:41, Migration optimization
+2022-07-17 01:05:54, Migration optimization
+2022-07-17 17:06:16, Migration optimization
+2022-07-17 17:08:09, None
+2022-07-17 20:39:14, Migration optimization
+2022-07-19 15:28:26, Migration Fehlersuche
+2022-07-19 19:52:59, Meeting
+2022-07-29 16:35:04, Meeting
+2022-07-29 17:07:47, Orga
+2022-07-29 17:50:59, Migration
+2022-07-29 18:42:28, Migration
+2022-08-01 14:40:37, Orga
+2022-08-01 16:35:26, Migration optimization
+2022-08-01 20:40:34, Orga
+2022-08-01 20:42:24, Orga
+2022-08-01 20:57:20, Orga
+2022-08-01 21:00:16, Orga
+2022-08-01 21:02:37, Orga
+2022-08-01 21:03:36, Orga
+2022-08-01 21:58:51, Orga
+2022-08-01 21:58:52, Orga
+2022-08-01 21:58:56, Orga
+2022-08-06 20:21:05, Orga
+2022-08-08 10:27:16, research
+2022-08-08 12:03:07, Orga
+2022-08-08 12:08:07, Orga
+2022-08-08 12:09:20, Orga
+2022-08-08 12:12:01, Orga
+2022-09-05 17:05:29, Migration Fehlersuche
+2022-09-06 14:08:08, Migration Fehlersuche
+2022-09-06 21:38:18, Meeting
+2022-09-08 18:28:55, Migration Fehlersuche
+2022-09-11 18:40:08, Migration optimization
+2022-09-11 19:46:01, Migration optimization
+2022-09-11 21:30:25, Migration optimization
+2022-09-12 19:20:47, Migration optimization
+2022-09-13 00:21:40, Orga
+2022-09-13 11:09:58, Migration optimization
+2022-09-13 13:22:57, Meeting
+2022-09-15 12:16:11, Migration Fehlersuche
+2022-09-15 17:51:49, Migration optimization
+2022-09-15 19:21:12, Migration optimization
+2022-09-15 19:28:04, Migration optimization
+2022-09-15 22:01:44, Migration optimization
+2022-09-16 02:39:35, Migration optimization
+2022-09-16 19:20:54, Migration Fehlersuche
+2022-09-22 17:32:49, Migration Fehlersuche
+2022-09-22 17:49:24, Meeting
+2022-09-25 12:48:31, Meeting
+2022-09-25 12:50:57, Meeting
+2022-09-28 18:58:10, Migration
+2022-10-03 22:11:39, Konzept
+2022-10-06 18:03:17, Meeting
+2022-10-06 20:37:41, Migration optimization
+2022-10-07 13:40:13, Migration
+2022-10-07 13:56:13, Meeting
+2022-10-07 18:46:10, Meeting
+2022-10-07 21:40:29, Migration
+2022-10-08 01:21:00, Migration
+2022-10-08 10:38:58, Neuaufbau
+2022-10-08 14:40:47, Neuaufbau
+2022-10-08 21:18:41, Neuaufbau
+2022-10-09 10:29:34, Neuaufbau
+2022-10-09 13:26:23, Neuaufbau
+2022-10-09 18:46:09, Neuaufbau
+2022-10-09 22:55:06, Neuaufbau
+2022-10-09 23:00:59, Neuaufbau
+2022-10-09 23:46:20, Neuaufbau
+2022-10-10 01:21:49, Neuaufbau
+2022-10-10 13:50:12, Neuaufbau
+2022-10-10 17:31:58, Neuaufbau
+2022-10-10 18:49:03, Neuaufbau
+2022-10-10 19:07:25, Neuaufbau
+2022-10-10 19:42:28, Neuaufbau
+2022-10-10 20:57:07, Neuaufbau
+2022-10-10 23:12:45, Neuaufbau
+2022-10-11 01:27:47, Neuaufbau
+2022-10-11 10:48:28, Meeting
+2022-10-11 11:33:05, Neuaufbau
+2022-10-11 13:22:03, Neuaufbau
+2022-10-11 15:13:45, Neuaufbau
+2022-10-11 22:39:35, Neuaufbau
+2022-10-12 11:23:31, Neuaufbau
+2022-10-14 14:50:09, Meeting
+2022-10-18 16:54:51, Meeting
+2022-10-18 19:37:13, GUI
+2022-10-18 19:43:41, GUI
+2022-10-18 19:48:15, GUI
+2022-10-18 19:48:17, GUI
+2022-10-19 17:16:23, Meeting
+2022-10-19 18:41:00, Meeting
+2022-10-22 09:50:55, Meeting
+2022-10-26 17:05:33, Meeting
