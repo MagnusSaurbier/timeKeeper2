@@ -1,8 +1,0 @@
-wage = 20
-job = MariaDB Anbindung für Kontaktdatenverwaltung Uscale Newsletter
-worker = Magnus Saurbier
-client = UScale GmbH
-client_address = Impact Hub Stuttgart
-client_street = Quellenstraße 7a
-client_place = 70376 Stuttgart
-bill_nr = 15

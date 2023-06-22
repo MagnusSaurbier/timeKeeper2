@@ -15,6 +15,7 @@ class TXTConnector:
     def __init__(self, master):
         self.master = master
         self.workPath = self.getLatestWork()
+        if self.workPath == 0 or self.workPath is None: self.workPath = "newWork/"
         print(self.workPath)
         #create folder at path if not exists
         if not os.path.exists(self.filesPath+self.workPath):
